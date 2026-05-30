@@ -1,0 +1,1507 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GrowthPilot AI</title>
+  <style>
+    :root {
+      --navy: #1B3A5C;
+      --blue: #2E75B6;
+      --ink: #142033;
+      --muted: #687588;
+      --line: #D9E2EC;
+      --page: #F4F6F9;
+      --white: #FFFFFF;
+      --green: #1F8F5B;
+      --orange: #D66B2D;
+      --red: #C2413B;
+      --yellow: #C59A24;
+      --shadow: 0 16px 36px rgba(20, 32, 51, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    .page {
+      display: none;
+      min-height: 100vh;
+      animation: fadeIn 180ms ease-out;
+    }
+
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .site-header {
+      background: var(--navy);
+      color: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 18px rgba(27, 58, 92, 0.24);
+    }
+
+    .header-inner {
+      width: min(1140px, calc(100% - 32px));
+      min-height: 72px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 800;
+      color: var(--white);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--white);
+      color: var(--navy);
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.86);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.94rem;
+    }
+
+    .btn {
+      min-height: 44px;
+      border-radius: 8px;
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: 0 10px 22px rgba(46, 117, 182, 0.24);
+    }
+
+    .btn-navy {
+      background: var(--navy);
+      color: var(--white);
+      box-shadow: 0 10px 22px rgba(27, 58, 92, 0.22);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--navy);
+      border: 1px solid rgba(27, 58, 92, 0.28);
+    }
+
+    .btn-outline-light {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .section {
+      padding: 70px 0;
+    }
+
+    .container {
+      width: min(1140px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: var(--navy);
+      color: var(--white);
+      padding: 84px 0 60px;
+    }
+
+    .hero-grid {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 13px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.13);
+      color: rgba(255, 255, 255, 0.92);
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .hero h1 {
+      margin: 24px auto 18px;
+      max-width: 820px;
+      font-size: clamp(2.35rem, 6vw, 4.6rem);
+      line-height: 1.03;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 690px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 1.12rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .stat-row {
+      margin-top: 44px;
+      padding-top: 26px;
+      border-top: 1px solid rgba(255, 255, 255, 0.22);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-value {
+      font-size: 1.45rem;
+      font-weight: 900;
+    }
+
+    .stat-label {
+      color: rgba(255, 255, 255, 0.72);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      color: var(--ink);
+      text-align: center;
+      font-size: clamp(1.65rem, 4vw, 2.45rem);
+      letter-spacing: 0;
+    }
+
+    .section-kicker {
+      max-width: 660px;
+      margin: 0 auto 34px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .white-section { background: var(--white); }
+    .grey-section { background: var(--page); }
+    .navy-section { background: var(--navy); color: var(--white); text-align: center; }
+    .navy-section .section-title, .navy-section .section-kicker { color: var(--white); }
+
+    .video-box {
+      width: min(600px, 100%);
+      aspect-ratio: 16 / 9;
+      margin: 0 auto;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #16304D, #1B3A5C);
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .play-button {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: var(--white);
+      color: var(--navy);
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      padding-left: 5px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    .steps-grid, .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .info-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      box-shadow: 0 8px 24px rgba(20, 32, 51, 0.06);
+    }
+
+    .step-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .info-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+    }
+
+    .info-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .result-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      margin-top: 15px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #E8F4EE;
+      color: #146C43;
+      font-weight: 800;
+      font-size: 0.82rem;
+    }
+
+    .wizard-header .header-inner {
+      justify-content: center;
+      position: relative;
+    }
+
+    .back-home {
+      position: absolute;
+      left: 0;
+      min-height: 40px;
+      color: var(--white);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      border-radius: 8px;
+      padding: 0 13px;
+      font-weight: 800;
+    }
+
+    .wizard-title {
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .wizard-main {
+      padding: 30px 0 60px;
+    }
+
+    .progress-shell {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 8px 22px rgba(20, 32, 51, 0.06);
+      margin-bottom: 22px;
+    }
+
+    .progress-dots {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      position: relative;
+    }
+
+    .progress-dot {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .dot-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #E8EDF3;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .progress-dot.done .dot-circle {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .progress-dot.active .dot-circle {
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: 0 0 0 5px rgba(46, 117, 182, 0.16);
+    }
+
+    .form-card {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .step-badge {
+      display: inline-flex;
+      min-height: 30px;
+      align-items: center;
+      padding: 0 11px;
+      border-radius: 999px;
+      background: #EAF2FA;
+      color: var(--navy);
+      font-weight: 900;
+      font-size: 0.85rem;
+    }
+
+    .form-card h2 {
+      margin: 14px 0 6px;
+      font-size: 1.75rem;
+      letter-spacing: 0;
+    }
+
+    .form-subtitle {
+      margin: 0 0 24px;
+      color: var(--muted);
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      margin: 0 0 4px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .hint {
+      display: block;
+      margin: 0 0 7px;
+      color: #7A8595;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #CCD7E3;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 118px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(46, 117, 182, 0.12);
+    }
+
+    .wizard-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .loading-page {
+      min-height: 100vh;
+      display: none;
+      place-items: center;
+      background: var(--page);
+      padding: 28px;
+    }
+
+    .loading-page.active { display: grid; }
+
+    .loading-card {
+      width: min(620px, 100%);
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      border: 6px solid #DDE7F1;
+      border-top-color: var(--blue);
+      animation: spin 850ms linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-card h1 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      letter-spacing: 0;
+    }
+
+    .loading-card p {
+      margin: 0 0 24px;
+      color: var(--muted);
+    }
+
+    .analysis-steps {
+      display: grid;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .analysis-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: #F1F5F9;
+      color: var(--muted);
+      font-weight: 800;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .analysis-step::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 0;
+      background: #E5F1FB;
+      transition: width 450ms ease;
+    }
+
+    .analysis-step span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .analysis-step.filled {
+      color: var(--navy);
+    }
+
+    .analysis-step.filled::before {
+      width: 100%;
+    }
+
+    .mini-dot {
+      position: relative;
+      z-index: 1;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #D3DDE8;
+      color: var(--white);
+      font-size: 0.78rem;
+      flex: 0 0 auto;
+    }
+
+    .analysis-step.filled .mini-dot {
+      background: var(--navy);
+    }
+
+    .error-box {
+      display: none;
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #FFF1F0;
+      border: 1px solid #F2B8B5;
+      color: #8F2E2A;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .error-box.active { display: block; }
+
+    .report-header .header-inner {
+      width: min(1180px, calc(100% - 32px));
+    }
+
+    .report-title {
+      display: grid;
+      gap: 2px;
+      color: var(--white);
+    }
+
+    .report-title strong {
+      font-size: 1.08rem;
+    }
+
+    .report-title span {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .report-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .report-actions .btn-outline-light {
+      min-height: 40px;
+      padding: 0 13px;
+    }
+
+    .report-actions .btn-navy {
+      min-height: 40px;
+      background: var(--blue);
+      padding: 0 13px;
+    }
+
+    .report-main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 28px auto 60px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .success-banner {
+      background: #E8F6EF;
+      border: 1px solid #B8E4CC;
+      color: #146C43;
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-weight: 850;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .score-card, .report-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(20, 32, 51, 0.06);
+      padding: 20px;
+    }
+
+    .score-card h3, .report-card h3 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      letter-spacing: 0;
+    }
+
+    .score-number {
+      font-size: 2rem;
+      font-weight: 950;
+      margin-bottom: 10px;
+    }
+
+    .bar {
+      height: 9px;
+      border-radius: 999px;
+      background: #E6ECF2;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--blue);
+      border-radius: 999px;
+    }
+
+    .swot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .swot-card {
+      border-radius: 8px;
+      padding: 18px;
+      border: 1px solid transparent;
+    }
+
+    .swot-card h4 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .swot-card ul, .report-card ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .swot-card li, .report-card li {
+      margin: 7px 0;
+    }
+
+    .swot-strengths { background: #E8F6EF; border-color: #B8E4CC; }
+    .swot-weaknesses { background: #FFF1E8; border-color: #F3C5A7; }
+    .swot-opportunities { background: #EAF2FA; border-color: #B8D3EC; }
+    .swot-threats { background: #FFF8DD; border-color: #E8D487; }
+
+    .plan-table {
+      display: grid;
+      gap: 10px;
+    }
+
+    .plan-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #FBFCFE;
+    }
+
+    .week-label {
+      color: var(--navy);
+      font-weight: 900;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 820px) {
+      .header-inner {
+        min-height: auto;
+        padding: 14px 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .nav-links .btn { width: 100%; }
+
+      .stat-row, .steps-grid, .features-grid, .examples-grid, .fields-grid,
+      .score-grid, .swot-grid, .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .wizard-header .header-inner {
+        align-items: stretch;
+      }
+
+      .back-home {
+        position: static;
+        width: fit-content;
+      }
+
+      .progress-dots {
+        grid-template-columns: repeat(4, 1fr);
+        row-gap: 14px;
+      }
+
+      .form-card, .loading-card {
+        padding: 22px;
+      }
+
+      .wizard-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+      }
+
+      .wizard-actions .btn {
+        width: 100%;
+      }
+
+      .report-header .header-inner {
+        flex-direction: column;
+      }
+
+      .report-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .report-actions .btn {
+        flex: 1 1 auto;
+      }
+
+      .plan-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section id="page-home" class="page active">
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="logo-wrap" href="#page-home" data-nav="home">
+          <span class="logo-mark">GP</span>
+          <span>GrowthPilot AI</span>
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="#how-it-works">How it works</a>
+          <a href="#examples">Examples</a>
+          <a href="#features">Features</a>
+          <button class="btn btn-navy" type="button" data-start>Start free analysis</button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-grid">
+          <span class="badge">AI-powered · Free for small businesses</span>
+          <h1>Your personal business growth consultant — available 24/7</h1>
+          <p>Answer 8 practical questions about your business and GrowthPilot turns your inputs into a clear growth strategy, SWOT analysis, pricing ideas, marketing plan, and 30-day action plan.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" type="button" data-start>Start business analysis</button>
+            <a class="btn btn-outline-light" href="#demo-video">Watch demo video</a>
+          </div>
+          <div class="stat-row" aria-label="Product stats">
+            <div><div class="stat-value">8 questions</div><div class="stat-label">Simple inputs</div></div>
+            <div><div class="stat-value">&lt;2 min</div><div class="stat-label">To complete</div></div>
+            <div><div class="stat-value">30-day plan</div><div class="stat-label">Ready to use</div></div>
+            <div><div class="stat-value">Free</div><div class="stat-label">For small businesses</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="demo-video" class="section white-section">
+        <div class="container">
+          <h2 class="section-title">See how it works in 90 seconds</h2>
+          <p class="section-kicker">A quick walkthrough of how your answers become a practical business growth report.</p>
+          <div class="video-box" aria-label="Demo video placeholder">
+            <button class="play-button" type="button" aria-label="Play demo video">▶</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" class="section grey-section">
+        <div class="container">
+          <h2 class="section-title">How it works</h2>
+          <p class="section-kicker">Built for local business owners who need clear next steps, not jargon.</p>
+          <div class="steps-grid">
+            <article class="info-card">
+              <div class="step-number">1</div>
+              <h3>Tell us about your business</h3>
+              <p>Share your products, customers, sales, marketing, competition, challenges, and goals.</p>
+            </article>
+            <article class="info-card">
+              <div class="step-number">2</div>
+              <h3>AI analyses everything</h3>
+              <p>GrowthPilot reviews your market position, gaps, risks, and practical growth levers.</p>
+            </article>
+            <article class="info-card">
+              <div class="step-number">3</div>
+              <h3>Get your action plan</h3>
+              <p>Receive a focused strategy with weekly actions, pricing ideas, and marketing moves.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section white-section">
+        <div class="container">
+          <h2 class="section-title">Features</h2>
+          <p class="section-kicker">Everything is written so you can act today, even with a small team and a small budget.</p>
+          <div class="features-grid">
+            <article class="info-card"><h3>Customer mindset</h3><p>Understand why customers buy, hesitate, compare, or return.</p></article>
+            <article class="info-card"><h3>SWOT + growth score</h3><p>See strengths, weaknesses, opportunities, threats, and growth potential.</p></article>
+            <article class="info-card"><h3>30-day plan</h3><p>Weekly actions that keep momentum realistic and measurable.</p></article>
+            <article class="info-card"><h3>WhatsApp content</h3><p>Get customer-friendly campaign ideas for everyday promotions.</p></article>
+            <article class="info-card"><h3>Pricing strategy</h3><p>Find bundles, offers, and margins that fit your market.</p></article>
+            <article class="info-card"><h3>PDF download</h3><p>Keep the report, print it, or share it with your team.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="examples" class="section grey-section">
+        <div class="container">
+          <h2 class="section-title">Examples</h2>
+          <p class="section-kicker">Realistic growth strategies for everyday local businesses.</p>
+          <div class="examples-grid">
+            <article class="info-card">
+              <h3>Utensil shop in Chennai</h3>
+              <p>Shifted focus to Prestige authority, WhatsApp repeat orders, and festival bundles.</p>
+              <span class="result-tag">Outcome: 22% more repeat sales</span>
+            </article>
+            <article class="info-card">
+              <h3>Salon in Pune</h3>
+              <p>Created weekday packages, review requests, and a monthly membership offer.</p>
+              <span class="result-tag">Outcome: 18 new bookings in 14 days</span>
+            </article>
+            <article class="info-card">
+              <h3>Tuition centre in Coimbatore</h3>
+              <p>Clarified parent messaging, demo class flow, and referral rewards.</p>
+              <span class="result-tag">Outcome: 12 trial classes booked</span>
+            </article>
+            <article class="info-card">
+              <h3>Mobile repair shop in Hyderabad</h3>
+              <p>Added trust guarantees, quick diagnostic pricing, and local Google review pushes.</p>
+              <span class="result-tag">Outcome: 30% higher walk-ins</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section navy-section">
+        <div class="container">
+          <h2 class="section-title">Ready to grow your business?</h2>
+          <p class="section-kicker">Start with a free analysis and get a practical plan you can use this week.</p>
+          <button class="btn btn-primary" type="button" data-start>Start my free business analysis</button>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <section id="page-wizard" class="page">
+    <header class="site-header wizard-header">
+      <div class="header-inner">
+        <button class="back-home" type="button" data-home>← Back to home</button>
+        <div class="wizard-title" id="wizardHeaderTitle">Business Analysis — Step 1 of 8</div>
+      </div>
+    </header>
+    <main class="wizard-main">
+      <div class="container">
+        <div class="progress-shell">
+          <div class="progress-dots" id="progressDots" aria-label="Step progress"></div>
+        </div>
+        <form class="form-card" id="businessForm">
+          <span class="step-badge" id="stepBadge">Step 1 of 8 — Business Details</span>
+          <h2 id="stepTitle">Business Details</h2>
+          <p class="form-subtitle" id="stepSubtitle">Start with the basics so the strategy understands your business context.</p>
+          <div class="fields-grid" id="fieldsGrid"></div>
+          <div class="wizard-actions">
+            <button class="btn btn-outline" type="button" id="backStep">Back</button>
+            <button class="btn btn-primary" type="button" id="nextStep">Next</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </section>
+
+  <section id="page-loading" class="page loading-page">
+    <div class="loading-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <h1>Analysing your business...</h1>
+      <p>This usually takes 15-30 seconds</p>
+      <div class="analysis-steps" id="analysisSteps">
+        <div class="analysis-step"><span class="mini-dot">1</span><span>Reading your business inputs</span></div>
+        <div class="analysis-step"><span class="mini-dot">2</span><span>Classifying business type and market</span></div>
+        <div class="analysis-step"><span class="mini-dot">3</span><span>Running AI growth analysis</span></div>
+        <div class="analysis-step"><span class="mini-dot">4</span><span>Building your 30-day action plan</span></div>
+        <div class="analysis-step"><span class="mini-dot">5</span><span>Generating your PDF report</span></div>
+      </div>
+      <div class="error-box" id="errorBox"></div>
+      <button class="btn btn-primary hidden" type="button" id="tryAgain">Try again</button>
+    </div>
+  </section>
+
+  <section id="page-report" class="page">
+    <header class="site-header report-header">
+      <div class="header-inner">
+        <div class="report-title">
+          <strong>GrowthPilot Strategy Report</strong>
+          <span>Generated just now</span>
+        </div>
+        <div class="report-actions">
+          <button class="btn btn-outline-light" type="button" data-home>← Back to home</button>
+          <button class="btn btn-outline-light" type="button" id="newAnalysis">New analysis</button>
+          <button class="btn btn-navy" type="button" id="downloadPdf">Download PDF</button>
+        </div>
+      </div>
+    </header>
+    <main class="report-main" id="reportBody"></main>
+  </section>
+
+  <script>
+    const API_KEY = "gp-secret-2024-changeme";
+    const sections = [
+      {
+        key: "business_details",
+        label: "Business Details",
+        subtitle: "Start with the basics so the strategy understands your business context.",
+        fields: [
+          { name: "business_name", label: "Business name", hint: "Your shop or company name as customers know it", placeholder: "e.g. AMAZON SUPER MARKET", type: "text", required: true },
+          { name: "industry", label: "Business type", hint: "Pick the category that best describes what you do", placeholder: "Select business type", type: "select", required: true, options: [
+            ["Retail shop", "Retail shop"], ["Service business", "Service business"], ["Food & restaurant", "Food & restaurant"], ["Manufacturing", "Manufacturing"], ["Other", "Other"]
+          ] },
+          { name: "location", label: "Location", hint: "City and area where your business operates", placeholder: "e.g. Anna Nagar, Chennai", type: "text", required: true },
+          { name: "years_in_business", label: "Years in business", hint: "How long have you been running this business?", placeholder: "e.g. 5", type: "number", required: true, min: 0, step: "0.5" },
+          { name: "team_size", label: "Team size", hint: "Total number of people working including yourself", placeholder: "e.g. 3", type: "number", required: true, min: 1, step: "1" },
+          { name: "business_stage", label: "Business stage", hint: "Where is your business right now?", placeholder: "Select business stage", type: "select", required: true, options: [
+            ["idea", "Idea stage"], ["startup", "Just started"], ["growing", "Growing steadily"], ["established", "Stable but stuck"], ["declining", "Declining"]
+          ] },
+          { name: "business_description", label: "Business description", hint: "Describe your business in 2-3 sentences. What do you sell? Who buys from you? What makes you different?", placeholder: "e.g. We are a local supermarket  in Anna Nagar selling branded items to families. We have been here for 5 years and are the only authorised Prestige dealer in the area.", type: "textarea", required: true, full: true }
+        ]
+      },
+      {
+        key: "products",
+        label: "Products & services",
+        subtitle: "Help the AI understand what you sell, what moves quickly, and where your profit comes from.",
+        fields: [
+          { name: "primary_products", label: "Main products/services", hint: "List what you sell, separated by commas", placeholder: "e.g. Notebooks, Icecreams, water bottles", type: "text", required: true, parse: "list", full: true },
+          { name: "average_price", label: "Average price", hint: "Typical amount a customer pays per purchase", placeholder: "e.g. ₹350 or ₹200 to ₹800", type: "text", required: true, parse: "money" },
+          { name: "profit_margin_percent", label: "Profit margin", hint: "Roughly how much you keep after paying for the product", placeholder: "Select profit margin", type: "select", required: true, options: [
+            ["8", "Less than 10%"], ["15", "10-20%"], ["25", "20-30%"], ["35", "30-40%"], ["45", "More than 40%"]
+          ] },
+          { name: "best_sellers", label: "Best-selling product", hint: "The item customers buy most often from you", placeholder: "e.g. Notebooks", type: "text", required: true, parse: "list" },
+          { name: "_slowest_product", label: "Slowest-moving product", hint: "Item sitting in your shop that rarely sells", placeholder: "e.g. Waterbottles",type: "text" },
+          { name: "_unique_products", label: "Unique products", hint: "Are you the only seller of something nearby? Any brand authorisation?", placeholder: "e.g. Only authorised Prestige dealer in this area. ", type: "textarea", full: true }
+        ]
+      },
+      {
+        key: "customers",
+        label: "Customers",
+        subtitle: "Describe who buys, where they come from, and what frustrates them.",
+        fields: [
+          { name: "target_customer", label: "Who buys from you", hint: "Describe your typical customer in detail", placeholder: "e.g. Middle class families aged 25-45 living within 3km.", type: "textarea", required: true, full: true },
+          { name: "customer_age_range", label: "Customer age range", hint: "Approximate age of most of your customers", placeholder: "e.g. 25-45 years", type: "text" },
+          { name: "customer_location", label: "Customer location", hint: "Where do your customers come from?", placeholder: "e.g. Anna Nagar and nearby suburbs", type: "text" },
+          { name: "repeat_customer_percent", label: "Repeat customer %", hint: "Out of 10 customers, how many come back again?", placeholder: "e.g. 3 out of 10 = enter 30", type: "number", min: 0, max: 100, step: "1" },
+          { name: "customer_pain_points", label: "Common complaints", hint: "What do customers complain about most?", placeholder: "e.g. Price too high compared to Big Bazaar, parking is difficult, limited variety", type: "textarea", parse: "list", full: true }
+        ]
+      },
+      {
+        key: "sales",
+        label: "Sales",
+        subtitle: "Add sales numbers and channels so the recommendations stay practical.",
+        fields: [
+          { name: "monthly_revenue", label: "Monthly revenue", hint: "Approximate total money collected in a typical month (₹)", placeholder: "e.g. 75000", type: "number", required: true, min: 0, step: "1" },
+          { name: "monthly_orders", label: "Monthly orders", hint: "Roughly how many customer transactions per month", placeholder: "e.g. 250", type: "number", required: true, min: 0, step: "1" },
+          { name: "sales_channels", label: "Sales channels", hint: "How do customers buy from you currently?", placeholder: "e.g. Walk-in shop, phone orders, WhatsApp", type: "text", required: true, parse: "list", full: true },
+          { name: "conversion_rate_percent", label: "Conversion rate %", hint: "Approximate percentage of enquiries or visitors who buy", placeholder: "e.g. 12", type: "number", min: 0, max: 100, step: "0.1" },
+          { name: "average_order_value", label: "Average order value", hint: "Typical amount spent per customer visit", placeholder: "e.g. ₹300", type: "text", parse: "money" },
+          { name: "_sales_problems", label: "Sales problems", hint: "What is preventing you from selling more?", placeholder: "e.g. Footfall dropped after Big Bazaar opened, customers compare prices online before buying", type: "textarea", full: true }
+        ]
+      },
+      {
+        key: "marketing",
+        label: "Marketing",
+        subtitle: "Tell us what you do now and what has worked before.",
+        fields: [
+          { name: "current_channels", label: "Current marketing channels", hint: "How do you currently reach new customers?", placeholder: "e.g. Word of mouth only, occasional flyers", type: "text", parse: "list", full: true },
+          { name: "monthly_marketing_budget", label: "Monthly marketing budget", hint: "How much do you spend on marketing per month? Enter 0 if nothing", placeholder: "e.g. 1000 or 0", type: "number", required: true, min: 0, step: "1" },
+          { name: "social_media_presence", label: "Social media presence", hint: "Do you have Instagram, Facebook, or WhatsApp Business?", placeholder: "e.g. WhatsApp personal only, no Instagram yet", type: "textarea", full: true },
+          { name: "campaigns_that_worked", label: "What has worked before", hint: "Any campaign, offer, or action that brought in customers in the past", placeholder: "e.g. Diwali discount brought 40 new customers last year", type: "textarea", parse: "list", full: true },
+          { name: "email_list_size", label: "Email list size", hint: "How many customer emails or subscribers do you have?", placeholder: "e.g. 250", type: "number", min: 0, step: "1" }
+        ]
+      },
+      {
+        key: "competition",
+        label: "Competition",
+        subtitle: "Position your business against the alternatives customers already consider.",
+        fields: [
+          { name: "main_competitors", label: "Main competitors", hint: "Who do customers go to instead of you?", placeholder: "e.g. Big Bazaar 500m away, another utensil shop on the main road", type: "textarea", parse: "list", full: true },
+          { name: "competitive_advantage", label: "Your competitive advantage", hint: "What can you offer that competitors cannot?", placeholder: "e.g. We are authorised Prestige dealers, 5 years of trusted service, free home delivery for orders above ₹500", type: "textarea", required: true, full: true },
+          { name: "price_positioning", label: "Price positioning", hint: "How do your prices compare to competitors?", placeholder: "Select price positioning", type: "select", required: true, options: [
+            ["budget", "Cheaper than most"], ["mid-market", "Similar pricing"], ["premium", "Slightly higher"], ["luxury", "Premium pricing"], ["unknown", "Not sure"]
+          ] },
+          { name: "market_saturation", label: "Market saturation", hint: "How many similar shops exist in your area?", placeholder: "Select market saturation", type: "select", required: true, options: [
+            ["low", "Only one in area"], ["medium", "2-3 competitors"], ["high", "Many competitors"], ["unknown", "Not sure"]
+          ] }
+        ]
+      },
+      {
+        key: "problems",
+        label: "Problems",
+        subtitle: "Name the current blockers so the plan solves the right problem first.",
+        fields: [
+          { name: "biggest_challenges", label: "Biggest challenges", hint: "List your top 3 business problems right now", placeholder: "e.g. Low footfall, customers lost to Big Bazaar, no way to reach customers after they leave", type: "textarea", required: true, parse: "list", full: true },
+          { name: "operational_bottlenecks", label: "Operational bottlenecks", hint: "List process, staffing, stock, or delivery issues slowing the business", placeholder: "e.g. Inventory tracking, late supplier deliveries, owner handles every customer issue", type: "textarea", parse: "list", full: true },
+          { name: "cash_flow_status", label: "Cash flow status", hint: "How is your business cash situation right now?", placeholder: "Select cash flow status", type: "select", required: true, options: [
+            ["healthy", "Healthy and growing"], ["tight", "Tight but managing"], ["critical", "In trouble"], ["unknown", "Not sure"]
+          ] },
+          { name: "urgent_problem", label: "Most urgent problem", hint: "The one problem that if solved would make the biggest difference", placeholder: "e.g. Getting footfall back to what it was before Big Bazaar opened 6 months ago", type: "textarea", full: true }
+        ]
+      },
+      {
+        key: "growth_goals",
+        label: "Growth Goals",
+        subtitle: "Set the target so your 30-day plan points in the right direction.",
+        fields: [
+          { name: "primary_goal", label: "Primary goal", hint: "What does success look like for you in 3 months?", placeholder: "e.g. Increase monthly sales from ₹75,000 to ₹1,00,000 and get 50 more regular customers", type: "textarea", required: true, full: true },
+          { name: "revenue_goal", label: "Revenue target", hint: "Monthly revenue you want to reach (₹)", placeholder: "e.g. 100000", type: "number", min: 0, step: "1" },
+          { name: "timeline_months", label: "Timeline months", hint: "How many months to achieve this goal?", placeholder: "e.g. 3", type: "number", required: true, min: 1, step: "1" },
+          { name: "expansion_plans", label: "Expansion plans", hint: "Any plans to add products, open new location, or go online?", placeholder: "e.g. Start WhatsApp ordering and home delivery within this area", type: "textarea", full: true }
+        ]
+      }
+    ];
+
+    let currentStep = 0;
+    let reportData = null;
+    let pdfPath = "";
+    const savedValues = {};
+
+    const pages = {
+      home: document.getElementById("page-home"),
+      wizard: document.getElementById("page-wizard"),
+      loading: document.getElementById("page-loading"),
+      report: document.getElementById("page-report")
+    };
+
+    const fieldsGrid = document.getElementById("fieldsGrid");
+    const progressDots = document.getElementById("progressDots");
+    const businessForm = document.getElementById("businessForm");
+
+    function showPage(name) {
+      Object.entries(pages).forEach(([pageName, element]) => {
+        element.classList.toggle("active", pageName === name);
+      });
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function saveCurrentStep() {
+      const data = new FormData(businessForm);
+      sections[currentStep].fields.forEach((field) => {
+        savedValues[field.name] = data.get(field.name) || "";
+      });
+    }
+
+    function renderProgress() {
+      progressDots.innerHTML = "";
+      sections.forEach((section, index) => {
+        const dot = document.createElement("div");
+        dot.className = "progress-dot";
+        if (index < currentStep) dot.classList.add("done");
+        if (index === currentStep) dot.classList.add("active");
+        dot.innerHTML = `<div class="dot-circle">${index < currentStep ? "✓" : index + 1}</div><span>${escapeHtml(section.label.split(" ")[0])}</span>`;
+        progressDots.appendChild(dot);
+      });
+    }
+
+    function renderStep() {
+      const section = sections[currentStep];
+      document.getElementById("wizardHeaderTitle").textContent = `Business Analysis — Step ${currentStep + 1} of 8`;
+      document.getElementById("stepBadge").textContent = `Step ${currentStep + 1} of 8 — ${section.label}`;
+      document.getElementById("stepTitle").textContent = section.label;
+      document.getElementById("stepSubtitle").textContent = section.subtitle;
+      document.getElementById("backStep").disabled = currentStep === 0;
+      document.getElementById("nextStep").textContent = currentStep === sections.length - 1 ? "Generate my strategy" : "Next";
+      fieldsGrid.innerHTML = section.fields.map(renderField).join("");
+      renderProgress();
+    }
+
+    function renderField(field) {
+      const value = savedValues[field.name] || "";
+      const required = field.required ? "required" : "";
+      const full = field.full || field.type === "textarea" ? " full" : "";
+      let control = "";
+
+      if (field.type === "select") {
+        control = `<select id="${field.name}" name="${field.name}" ${required}>
+          <option value="" disabled ${value ? "" : "selected"}>${escapeHtml(field.placeholder)}</option>
+          ${field.options.map(([optionValue, optionLabel]) => `<option value="${escapeHtml(optionValue)}" ${value === optionValue ? "selected" : ""}>${escapeHtml(optionLabel)}</option>`).join("")}
+        </select>`;
+      } else if (field.type === "textarea") {
+        control = `<textarea id="${field.name}" name="${field.name}" placeholder="${escapeHtml(field.placeholder)}" ${required}>${escapeHtml(value)}</textarea>`;
+      } else {
+        control = `<input id="${field.name}" name="${field.name}" type="${field.type}" placeholder="${escapeHtml(field.placeholder)}" value="${escapeHtml(value)}" ${required} min="${field.min ?? ""}" max="${field.max ?? ""}" step="${field.step ?? "any"}">`;
+      }
+
+      return `<div class="field${full}">
+        <label for="${field.name}">${escapeHtml(field.label)}</label>
+        <span class="hint">${escapeHtml(field.hint)}</span>
+        ${control}
+      </div>`;
+    }
+
+    function parseList(value) {
+      return String(value || "")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function parseNumber(value, fallback = null) {
+      if (value === null || value === undefined || value === "") return fallback;
+      const match = String(value).replaceAll(",", "").match(/-?\d+(\.\d+)?/);
+      const parsed = match ? Number(match[0]) : Number.NaN;
+      return Number.isFinite(parsed) ? parsed : fallback;
+    }
+
+    function buildPayload() {
+      saveCurrentStep();
+      const payload = {
+        business_details: {
+          business_name: savedValues.business_name || "",
+          industry: savedValues.industry || "",
+          location: savedValues.location || "",
+          years_in_business: parseFloat(savedValues.years_in_business) || 0,
+          team_size: parseInt(savedValues.team_size, 10) || 1,
+          business_stage: savedValues.business_stage || "",
+          business_description: savedValues.business_description || ""
+        },
+        products: {
+          primary_products: parseList(savedValues.primary_products || ""),
+          average_price: parseFloat(savedValues.average_price) || 0,
+          best_sellers: [savedValues.best_sellers || ""].filter(Boolean),
+          profit_margin_percent: parseFloat(savedValues.profit_margin_percent) || null
+        },
+        customers: {
+          target_customer: savedValues.target_customer || "",
+          customer_age_range: savedValues.customer_age_range || null,
+          customer_location: savedValues.customer_location || null,
+          repeat_customer_percent: parseFloat(savedValues.repeat_customer_percent) || null,
+          customer_pain_points: parseList(savedValues.customer_pain_points || "")
+        },
+        sales: {
+          monthly_revenue: parseFloat(savedValues.monthly_revenue) || 0,
+          monthly_orders: parseInt(savedValues.monthly_orders, 10) || 0,
+          sales_channels: parseList(savedValues.sales_channels || ""),
+          conversion_rate_percent: parseFloat(savedValues.conversion_rate_percent) || null,
+          average_order_value: parseFloat(savedValues.average_order_value) || null
+        },
+        marketing: {
+          current_channels: parseList(savedValues.current_channels || ""),
+          monthly_marketing_budget: parseFloat(savedValues.monthly_marketing_budget) || 0,
+          social_media_presence: savedValues.social_media_presence || null,
+          campaigns_that_worked: parseList(savedValues.campaigns_that_worked || ""),
+          email_list_size: parseInt(savedValues.email_list_size, 10) || null
+        },
+        competition: {
+          main_competitors: parseList(savedValues.main_competitors || ""),
+          competitive_advantage: savedValues.competitive_advantage || "",
+          price_positioning: savedValues.price_positioning || "",
+          market_saturation: savedValues.market_saturation || ""
+        },
+        problems: {
+          biggest_challenges: parseList(savedValues.biggest_challenges || ""),
+          operational_bottlenecks: parseList(savedValues.operational_bottlenecks || ""),
+          cash_flow_status: savedValues.cash_flow_status || "",
+          urgent_problem: savedValues.urgent_problem || null
+        },
+        growth_goals: {
+          primary_goal: savedValues.primary_goal || "",
+          revenue_goal: parseFloat(savedValues.revenue_goal) || null,
+          timeline_months: parseInt(savedValues.timeline_months, 10) || 3,
+          hiring_goals: null,
+          expansion_plans: savedValues.expansion_plans || null
+        }
+      };
+      return payload;
+    }
+
+    function validateStep() {
+      const controls = Array.from(fieldsGrid.querySelectorAll("input, select, textarea"));
+      for (const control of controls) {
+        if (!control.checkValidity()) {
+          control.reportValidity();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function startWizard(fresh = false) {
+      if (fresh) {
+        Object.keys(savedValues).forEach((key) => delete savedValues[key]);
+        currentStep = 0;
+      }
+      renderStep();
+      showPage("wizard");
+    }
+
+    function animateLoading() {
+      const steps = Array.from(document.querySelectorAll(".analysis-step"));
+      steps.forEach((step) => step.classList.remove("filled"));
+      steps.forEach((step, index) => {
+        setTimeout(() => step.classList.add("filled"), 450 + index * 650);
+      });
+    }
+
+    async function submitAnalysis() {
+      const payload = buildPayload();
+      const errorBox = document.getElementById("errorBox");
+      errorBox.classList.remove("active");
+      errorBox.style.display = "none";
+      document.getElementById("tryAgain").classList.add("hidden");
+      showPage("loading");
+      animateLoading();
+      console.log(JSON.stringify(payload, null, 2));
+
+      try {
+        const response = await fetch("/analyze", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-Key": "gp-secret-2024-changeme"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+
+          if (response.status === 422 && errorData.detail) {
+            // Extract the first validation error and show it
+            const firstError = errorData.detail[0];
+            const field = firstError.loc
+              ? firstError.loc[firstError.loc.length - 1]
+              : "field";
+            const msg = firstError.msg || "Invalid value";
+            errorBox.textContent =
+              `Please check your input: ${field} — ${msg}`;
+          } else if (response.status === 401) {
+            errorBox.textContent =
+              "Authentication error. Please refresh and try again.";
+          } else if (response.status === 429) {
+            errorBox.textContent =
+              "Too many requests. Please wait a minute and try again.";
+          } else {
+            errorBox.textContent =
+              "Could not generate strategy. Please try again.";
+          }
+
+          errorBox.style.display = "block";
+          document.getElementById("tryAgain").classList.remove("hidden");
+          return;
+        }
+
+        const data = await response.json();
+        reportData = data.report || data;
+        pdfPath = data.pdf_path || "";
+        renderReport(reportData);
+        showPage("report");
+      } catch (error) {
+        errorBox.textContent = "Could not generate strategy. Please try again.";
+        errorBox.style.display = "block";
+        errorBox.classList.add("active");
+        document.getElementById("tryAgain").classList.remove("hidden");
+      }
+    }
+
+    function asArray(value) {
+      if (Array.isArray(value)) return value.filter(Boolean);
+      if (!value) return [];
+      return [String(value)];
+    }
+
+    function listHtml(items, fallback) {
+      const list = asArray(items);
+      if (!list.length) list.push(fallback);
+      return `<ul>${list.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+    }
+
+    function scoreFromReport(kind) {
+      const text = JSON.stringify(reportData || {}).toLowerCase();
+      const strengths = (reportData?.swot?.strengths || []).length;
+      const opportunities = (reportData?.swot?.opportunities || []).length;
+      if (kind === "product") return Math.min(10, Math.max(5, 6 + strengths));
+      if (kind === "marketing") return text.includes("whatsapp") || text.includes("social") ? 8 : 6;
+      return Math.min(10, Math.max(6, 6 + opportunities));
+    }
+
+    function renderReport(report) {
+      const swot = report.swot || {};
+      const actionPlan = asArray(report.thirty_day_action_plan);
+      const weeks = [0, 1, 2, 3].map((index) => actionPlan[index] || "Focus on the highest-impact action from your strategy and measure customer response.");
+      const scores = [
+        ["Product clarity", scoreFromReport("product"), "var(--green)"],
+        ["Marketing strength", scoreFromReport("marketing"), "var(--blue)"],
+        ["Growth potential", scoreFromReport("growth"), "var(--yellow)"]
+      ];
+
+      document.getElementById("reportBody").innerHTML = `
+        <div class="success-banner">Your growth strategy is ready. Start with Week 1 actions — they cost nothing and can show results within 7 days.</div>
+        <section class="score-grid">
+          ${scores.map(([label, score, color]) => `
+            <article class="score-card">
+              <h3>${escapeHtml(label)}</h3>
+              <div class="score-number">${score}/10</div>
+              <div class="bar"><span style="width:${score * 10}%; background:${color};"></span></div>
+            </article>
+          `).join("")}
+        </section>
+        <section class="report-card">
+          <h3>Executive summary</h3>
+          <p>${escapeHtml(report.executive_summary || "Your business has clear opportunities to improve customer reach, repeat sales, pricing, and weekly execution.")}</p>
+        </section>
+        <section class="report-card">
+          <h3>SWOT analysis</h3>
+          <div class="swot-grid">
+            <div class="swot-card swot-strengths"><h4>Strengths</h4>${listHtml(swot.strengths, "Trusted local presence and customer relationships.")}</div>
+            <div class="swot-card swot-weaknesses"><h4>Weaknesses</h4>${listHtml(swot.weaknesses, "Limited structured marketing and follow-up systems.")}</div>
+            <div class="swot-card swot-opportunities"><h4>Opportunities</h4>${listHtml(swot.opportunities, "Use WhatsApp, bundles, and referrals to grow repeat demand.")}</div>
+            <div class="swot-card swot-threats"><h4>Threats</h4>${listHtml(swot.threats, "Competitors with stronger discounts or online visibility.")}</div>
+          </div>
+        </section>
+        <section class="report-card">
+          <h3>30-day action plan</h3>
+          <div class="plan-table">
+            ${weeks.map((item, index) => `<div class="plan-row"><div class="week-label">Week ${index + 1}</div><div>${escapeHtml(item)}</div></div>`).join("")}
+          </div>
+        </section>
+        <section class="two-col">
+          <article class="report-card">
+            <h3>Pricing recommendations</h3>
+            ${listHtml(report.pricing_recommendations, "Create simple bundles and test a small value-added offer.")}
+          </article>
+          <article class="report-card">
+            <h3>Marketing plan</h3>
+            ${listHtml(report.marketing_plan, "Send weekly WhatsApp offers and ask happy customers for referrals.")}
+          </article>
+        </section>
+        <section class="report-card">
+          <h3>Risk warnings</h3>
+          ${listHtml(report.risks, "Track cash flow carefully and avoid heavy spending until the first actions show traction.")}
+        </section>
+      `;
+    }
+
+    function normalizePdfUrl(path) {
+      if (!path) return "";
+      if (path.startsWith("http") || path.startsWith("/")) return path;
+      const normalized = path.replaceAll("\\", "/");
+      const staticIndex = normalized.toLowerCase().lastIndexOf("/static/");
+      if (staticIndex >= 0) return normalized.slice(staticIndex);
+      return `/${normalized}`;
+    }
+
+    document.querySelectorAll("[data-start]").forEach((button) => {
+      button.addEventListener("click", () => startWizard(false));
+    });
+
+    document.querySelectorAll("[data-home]").forEach((button) => {
+      button.addEventListener("click", () => showPage("home"));
+    });
+
+    document.getElementById("backStep").addEventListener("click", () => {
+      saveCurrentStep();
+      currentStep = Math.max(0, currentStep - 1);
+      renderStep();
+    });
+
+    document.getElementById("nextStep").addEventListener("click", () => {
+      if (!validateStep()) return;
+      saveCurrentStep();
+      if (currentStep < sections.length - 1) {
+        currentStep += 1;
+        renderStep();
+      } else {
+        submitAnalysis();
+      }
+    });
+
+    document.getElementById("tryAgain").addEventListener("click", () => {
+      renderStep();
+      showPage("wizard");
+    });
+
+    document.getElementById("newAnalysis").addEventListener("click", () => startWizard(true));
+
+    document.getElementById("downloadPdf").addEventListener("click", () => {
+      const url = normalizePdfUrl(pdfPath);
+      if (url) {
+        window.open(url, "_blank", "noopener");
+      } else {
+        window.print();
+      }
+    });
+
+    renderStep();
+  </script>
+</body>
+</html>

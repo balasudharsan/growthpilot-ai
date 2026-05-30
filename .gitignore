@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite
+*.sqlite3
+.venv/
+venv/
+growthpilot/.venv/
+growthpilot/static/reports/*.pdf
+growthpilot/uvicorn.*.log
