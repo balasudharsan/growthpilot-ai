@@ -87,14 +87,18 @@ def save_input(payload: dict[str, Any]) -> int:
     try:
         with get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                f"""
-                INSERT INTO business_inputs (payload_json)
-                VALUES ({PLACEHOLDER})
-                {"RETURNING id" if IS_POSTGRES else ""}
-                """,
-                (json.dumps(payload, ensure_ascii=True),),
-            )
+            if IS_POSTGRES:
+                cursor.execute(
+                    "INSERT INTO business_inputs (payload_json) "
+                    "VALUES (%s) RETURNING id",
+                    (json.dumps(payload, ensure_ascii=True),),
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO business_inputs (payload_json) "
+                    "VALUES (?)",
+                    (json.dumps(payload, ensure_ascii=True),),
+                )
             row = cursor.fetchone() if IS_POSTGRES else None
             conn.commit()
             return int(row[0] if IS_POSTGRES else cursor.lastrowid)
@@ -107,14 +111,18 @@ def save_report(input_id: int, report: dict[str, Any], pdf_path: str) -> int:
     try:
         with get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                f"""
-                INSERT INTO reports (input_id, report_json, pdf_path)
-                VALUES ({PLACEHOLDER}, {PLACEHOLDER}, {PLACEHOLDER})
-                {"RETURNING id" if IS_POSTGRES else ""}
-                """,
-                (input_id, json.dumps(report, ensure_ascii=True), pdf_path),
-            )
+            if IS_POSTGRES:
+                cursor.execute(
+                    "INSERT INTO reports (input_id, report_json, pdf_path) "
+                    "VALUES (%s, %s, %s) RETURNING id",
+                    (input_id, json.dumps(report, ensure_ascii=True), pdf_path),
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO reports (input_id, report_json, pdf_path) "
+                    "VALUES (?, ?, ?)",
+                    (input_id, json.dumps(report, ensure_ascii=True), pdf_path),
+                )
             row = cursor.fetchone() if IS_POSTGRES else None
             conn.commit()
             return int(row[0] if IS_POSTGRES else cursor.lastrowid)
