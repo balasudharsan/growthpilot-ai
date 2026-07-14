@@ -2,7 +2,7 @@
 
 An AI-powered business growth strategy tool for small business owners. Answer 8 simple questions → receive a SWOT analysis, 30-day action plan, pricing strategy, WhatsApp marketing content, and a downloadable PDF report — all in under 2 minutes.
 
-🔗 **Live:** [growthpilot-ai-production.up.railway.app](https://growthpilot-ai-production.up.railway.app)
+🔗 **Live:** https://growthpilot-ai-2bai.onrender.com/
 
 ---
 
@@ -46,7 +46,7 @@ This is not a generic LLM wrapper. It is built with security designed in from th
 | LLM | Groq API |
 | Database | PostgreSQL (Supabase) |
 | PDF | fpdf2 |
-| Hosting | Railway |
+| Hosting | OnRender |
 | Monitoring | UptimeRobot |
 
 ## Local setup
