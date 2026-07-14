@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from fpdf import FPDF
+from supabase import create_client
 
 from utils.config import project_path
 from utils.logger import get_logger
@@ -29,6 +30,35 @@ def sanitise_for_pdf(text: str) -> str:
 
 
 logger = get_logger(__name__)
+
+
+def upload_pdf_to_supabase(local_pdf_path: str, filename: str) -> str:
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_SERVICE_KEY")
+
+    if not supabase_url or not supabase_key:
+        logger.warning("Supabase not configured, using local path")
+        return f"/static/reports/{filename}"
+
+    try:
+        client = create_client(supabase_url, supabase_key)
+        with open(local_pdf_path, "rb") as f:
+            pdf_bytes = f.read()
+
+        client.storage.from_("growthpilot-reports").upload(
+            path=filename,
+            file=pdf_bytes,
+            file_options={"content-type": "application/pdf", "upsert": "true"},
+        )
+
+        public_url = client.storage.from_("growthpilot-reports").get_public_url(filename)
+
+        logger.info(f"PDF uploaded to Supabase: {filename}")
+        return public_url
+
+    except Exception as e:
+        logger.error(f"Supabase upload failed: {e}")
+        return f"/static/reports/{filename}"
 
 
 def _write_list(pdf: FPDF, title: str, items: list[str]) -> None:
@@ -77,8 +107,12 @@ def generate_pdf(report: dict) -> str:
         if report["risks"]:
             _write_list(pdf, "Risks", report["risks"])
 
-        pdf.output(file_path)
-        return str(file_path)
+        pdf_filename = f"{report['report_id']}.pdf"
+        local_path = str(file_path)
+        pdf.output(local_path)
+
+        pdf_url = upload_pdf_to_supabase(local_path, pdf_filename)
+        return pdf_url
     except Exception:
         logger.exception("PDF generation failed")
         raise
