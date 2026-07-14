@@ -1,0 +1,4 @@
+# Tell GitHub Linguist to ignore the frontend HTML file
+# in language statistics (it's UI, not the main project language)
+growthpilot/static/*.html linguist-documentation
+growthpilot/static/**/*.html linguist-documentation
